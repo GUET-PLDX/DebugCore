@@ -19,7 +19,9 @@ depends: []
 #include "app_framework.hpp"
 #include "libxr_def.hpp"
 #include "libxr_rw.hpp"
+#include "libxr_time.hpp"
 #include "thread.hpp"
+#include "timebase.hpp"
 
 namespace debug_core {
 
@@ -168,12 +170,16 @@ int run_command(int argc, char** argv, View default_view,
       return -1;
     }
 
-    int elapsed = 0;
-    while (elapsed < time_ms) {
+    // 按绝对唤醒时刻调度，打印耗时不会累积进周期和总时长。
+    const LibXR::MillisecondTimestamp START =
+        LibXR::Timebase::GetMilliseconds();
+    LibXR::MillisecondTimestamp last_wakeup = START;
+    do {
       print_once(view);
-      LibXR::Thread::Sleep(interval_ms);
-      elapsed += interval_ms;
-    }
+      LibXR::Thread::SleepUntil(last_wakeup,
+                                static_cast<uint32_t>(interval_ms));
+    } while ((last_wakeup - START).ToMillisecond() <
+             static_cast<uint32_t>(time_ms));
     return 0;
   }
 
