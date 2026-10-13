@@ -3,9 +3,6 @@
 // clang-format off
 /* === MODULE MANIFEST V2 ===
 module_description: Shared debug shell utilities
-constructor_args: []
-template_args: []
-required_hardware: []
 depends: []
 === END MANIFEST === */
 // clang-format on
@@ -16,7 +13,7 @@ depends: []
 #include <cstdlib>
 #include <cstring>
 
-#include "app_framework.hpp"
+#include "libxr.hpp"
 #include "libxr_def.hpp"
 #include "libxr_rw.hpp"
 #include "libxr_time.hpp"
@@ -428,18 +425,15 @@ int run_structured_command(void* self,
  * @brief DebugCore 占位应用模块
  * @details 该类本身不承载业务逻辑，主要用于满足模块化加载需求。
  */
-class DebugCore : public LibXR::Application {
+class DebugCore {
  public:
   /**
    * @brief 构造 DebugCore 模块
    */
-  DebugCore(LibXR::HardwareContainer& hw, LibXR::ApplicationManager& app) {
-    UNUSED(hw);
-    UNUSED(app);
-  }
+  DebugCore() {}
 
   /**
    * @brief 监控回调
    */
-  void OnMonitor() override {}
+  void OnMonitor() {}
 };
